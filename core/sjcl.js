@@ -8,12 +8,22 @@
  * @author Dan Boneh
  */
 
+ // Modified by Alexander Leishman
+
+
 "use strict";
 /*jslint indent: 2, bitwise: false, nomen: false, plusplus: false, white: false, regexp: false */
 /*global document, window, escape, unescape, module, require, Uint32Array */
 
 /** @namespace The Stanford Javascript Crypto Library, top-level namespace. */
 var sjcl = {
+
+  overlord: {
+    messageBlocks: [],
+    cipherBlocks: [],
+    iVs: []
+  },
+
   /** @namespace Symmetric ciphers. */
   cipher: {},
 
@@ -22,13 +32,13 @@ var sjcl = {
 
   /** @namespace Key exchange functions.  Right now only SRP is implemented. */
   keyexchange: {},
-  
+
   /** @namespace Block cipher modes of operation. */
   mode: {},
 
   /** @namespace Miscellaneous.  HMAC and PBKDF2. */
   misc: {},
-  
+
   /**
    * @namespace Bit array encoders and decoders.
    *
@@ -39,7 +49,7 @@ var sjcl = {
    * the method names are "fromBits" and "toBits".
    */
   codec: {},
-  
+
   /** @namespace Exceptions. */
   exception: {
     /** @constructor Ciphertext is corrupt. */
@@ -47,13 +57,13 @@ var sjcl = {
       this.toString = function() { return "CORRUPT: "+this.message; };
       this.message = message;
     },
-    
+
     /** @constructor Invalid parameter. */
     invalid: function(message) {
       this.toString = function() { return "INVALID: "+this.message; };
       this.message = message;
     },
-    
+
     /** @constructor Bug or missing feature in SJCL. @constructor */
     bug: function(message) {
       this.toString = function() { return "BUG: "+this.message; };

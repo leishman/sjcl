@@ -14,7 +14,7 @@ sjcl.mode.ccm = {
    * @constant
    */
   name: "ccm",
-  
+
   /** Encrypt in CCM mode.
    * @static
    * @param {Object} prf The pseudorandom function.  It must have a block size of 16 bytes.
@@ -28,25 +28,25 @@ sjcl.mode.ccm = {
     var L, out = plaintext.slice(0), tag, w=sjcl.bitArray, ivl = w.bitLength(iv) / 8, ol = w.bitLength(out) / 8;
     tlen = tlen || 64;
     adata = adata || [];
-    
+
     if (ivl < 7) {
       throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");
     }
-    
+
     // compute the length of the length
     for (L=2; L<4 && ol >>> 8*L; L++) {}
     if (L < 15 - ivl) { L = 15-ivl; }
     iv = w.clamp(iv,8*(15-L));
-    
+
     // compute the tag
     tag = sjcl.mode.ccm._computeTag(prf, plaintext, iv, adata, tlen, L);
-    
+
     // encrypt
     out = sjcl.mode.ccm._ctrMode(prf, out, iv, tag, tlen, L);
-    
+    console.log(w.concat(out.data, out.tag))
     return w.concat(out.data, out.tag);
   },
-  
+
   /** Decrypt in CCM mode.
    * @static
    * @param {Object} prf The pseudorandom function.  It must have a block size of 16 bytes.
@@ -62,31 +62,31 @@ sjcl.mode.ccm = {
     var L,
         w=sjcl.bitArray,
         ivl = w.bitLength(iv) / 8,
-        ol = w.bitLength(ciphertext), 
+        ol = w.bitLength(ciphertext),
         out = w.clamp(ciphertext, ol - tlen),
         tag = w.bitSlice(ciphertext, ol - tlen), tag2;
-    
+
 
     ol = (ol - tlen) / 8;
-        
+
     if (ivl < 7) {
       throw new sjcl.exception.invalid("ccm: iv must be at least 7 bytes");
     }
-    
+
     // compute the length of the length
     for (L=2; L<4 && ol >>> 8*L; L++) {}
     if (L < 15 - ivl) { L = 15-ivl; }
     iv = w.clamp(iv,8*(15-L));
-    
+
     // decrypt
     out = sjcl.mode.ccm._ctrMode(prf, out, iv, tag, tlen, L);
-    
+
     // check the tag
     tag2 = sjcl.mode.ccm._computeTag(prf, out.data, iv, adata, tlen, L);
     if (!w.equal(out.tag, tag2)) {
       throw new sjcl.exception.corrupt("ccm: tag doesn't match");
     }
-    
+
     return out.data;
   },
 
@@ -104,12 +104,12 @@ sjcl.mode.ccm = {
     var mac, tmp, i, macData = [], w=sjcl.bitArray, xor = w._xor4;
 
     tlen /= 8;
-  
+
     // check tag length and message length
     if (tlen % 2 || tlen < 4 || tlen > 16) {
       throw new sjcl.exception.invalid("ccm: invalid tag length");
     }
-  
+
     if (adata.length > 0xFFFFFFFF || plaintext.length > 0xFFFFFFFF) {
       // I don't want to deal with extracting high words from doubles.
       throw new sjcl.exception.bug("ccm: can't deal with 4GiB or more data");
@@ -122,8 +122,8 @@ sjcl.mode.ccm = {
     mac = w.concat(mac, iv);
     mac[3] |= w.bitLength(plaintext)/8;
     mac = prf.encrypt(mac);
-    
-  
+
+
     if (adata.length) {
       // mac the associated data.  start with its length...
       tmp = w.bitLength(adata)/8;
@@ -132,14 +132,14 @@ sjcl.mode.ccm = {
       } else if (tmp <= 0xFFFFFFFF) {
         macData = w.concat([w.partial(16,0xFFFE)], [tmp]);
       } // else ...
-    
+
       // mac the data itself
       macData = w.concat(macData, adata);
       for (i=0; i<macData.length; i += 4) {
         mac = prf.encrypt(xor(mac, macData.slice(i,i+4).concat([0,0,0])));
       }
     }
-  
+
     // mac the plaintext
     for (i=0; i<plaintext.length; i+=4) {
       mac = prf.encrypt(xor(mac, plaintext.slice(i,i+4).concat([0,0,0])));
@@ -165,20 +165,24 @@ sjcl.mode.ccm = {
 
     // start the ctr
     ctr = w.concat([w.partial(8,L-1)],iv).concat([0,0,0]).slice(0,4);
-    
+
     // en/decrypt the tag
     tag = w.bitSlice(xor(tag,prf.encrypt(ctr)), 0, tlen);
-  
+
     // en/decrypt the data
     if (!l) { return {tag:tag, data:[]}; }
-    
+
+    // XOR the the message blocks with F(k, IV + i)
     for (i=0; i<l; i+=4) {
       ctr[3]++;
       enc = prf.encrypt(ctr);
+      sjcl.overlord.messageBlocks.push(data)
+      sjcl.overlord.iVs.push(ctr[3])
       data[i]   ^= enc[0];
       data[i+1] ^= enc[1];
       data[i+2] ^= enc[2];
       data[i+3] ^= enc[3];
+      sjcl.overlord.cipherBlocks.push(data)
     }
     return { tag:tag, data:w.clamp(data,bl) };
   }
