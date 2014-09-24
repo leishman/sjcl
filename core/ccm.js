@@ -162,6 +162,12 @@ sjcl.mode.ccm = {
    */
   _ctrMode: function(prf, data, iv, tag, tlen, L) {
     var enc, i, w=sjcl.bitArray, xor = w._xor4, ctr, l = data.length, bl=w.bitLength(data);
+    var o = sjcl.overlord;
+    for(var k in o) {
+      if(o.hasOwnProperty(k)) {
+        o[k] = [];
+      }
+    }
 
     // start the ctr
     ctr = w.concat([w.partial(8,L-1)],iv).concat([0,0,0]).slice(0,4);
@@ -176,13 +182,14 @@ sjcl.mode.ccm = {
     for (i=0; i<l; i+=4) {
       ctr[3]++;
       enc = prf.encrypt(ctr);
-      sjcl.overlord.messageBlocks.push(data)
+      sjcl.overlord.messageBlocks.push(data.slice(i, i+4));
       sjcl.overlord.iVs.push(ctr[3])
       data[i]   ^= enc[0];
       data[i+1] ^= enc[1];
       data[i+2] ^= enc[2];
       data[i+3] ^= enc[3];
-      sjcl.overlord.cipherBlocks.push(data)
+      sjcl.overlord.prfOutputs.push(enc.slice(0, 4));
+      sjcl.overlord.cipherBlocks.push(data.slice(i, i+4));
     }
     return { tag:tag, data:w.clamp(data,bl) };
   }

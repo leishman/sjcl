@@ -21,7 +21,6 @@
   _encrypt: function (password, plaintext, params, rp) {
     params = params || {};
     rp = rp || {};
-    debugger
 
     var j = sjcl.json, p = j._add({ iv: sjcl.random.randomWords(4,0) },
                                   j.defaults), tmp, prp, adata;
@@ -80,7 +79,6 @@
    * @throws {sjcl.exception.invalid} if a parameter is invalid.
    */
   encrypt: function (password, plaintext, params, rp) {
-    debugger
     var j = sjcl.json, p = j._encrypt.apply(j, arguments);
     return j.encode(p);
   },
@@ -163,7 +161,6 @@
    * @throws {sjcl.exception.bug} if a parameter has an unsupported type.
    */
   encode: function (obj) {
-    debugger
     var i, out='{', comma='';
     for (i in obj) {
       if (obj.hasOwnProperty(i)) {

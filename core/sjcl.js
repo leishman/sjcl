@@ -21,7 +21,8 @@ var sjcl = {
   overlord: {
     messageBlocks: [],
     cipherBlocks: [],
-    iVs: []
+    iVs: [],
+    prfOutputs: []
   },
 
   /** @namespace Symmetric ciphers. */

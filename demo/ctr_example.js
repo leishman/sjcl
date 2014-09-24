@@ -55,12 +55,11 @@ function bindEvents() {
   var messageForm, inputEvent;
   messageForm = document.getElementById('messageInput');
   messageForm.oninput = runCircuit;
-  runCircuit(messageForm.value)
+  runCircuit(messageForm.value);
 }
 
 function loaded() {
-  bindEvents()
-
+  bindEvents();
 }
 
 
