@@ -19,11 +19,109 @@
   <script type="text/javascript" src="../core/random.js"></script>
   <script type="text/javascript" src="../core/convenience.js"></script>
   <script type="text/javascript" src="ctr_example.js"></script>
+<style type="text/css">
+  body * {
+    box-sizing: border-box;
+  }
 
+  .container {
+    width: 800px;
+    margin: 0 auto;
+    padding-top: 40px;
+  }
+
+  .circuit-left, .circuit-right {
+    height: 500px;
+    display: inline-block;
+    vertical-align: top
+  }
+
+  .circuit-left {
+    width: 200px;
+  }
+
+  #iv {
+    width: 200px;
+    height: 100px;
+    border: solid 3px;
+  }
+
+  .block-row {
+    width: auto;
+    height: 100px;
+    padding: 20px 0;
+  }
+
+  .block-row div {
+    display: inline-block;
+    border: 3px solid;
+    border-radius: 3px;
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .block, .prf-output {
+    width: 150px;
+    height: 100%;
+    margin: 0 10px;
+    word-wrap: break-word;
+  }
+
+  .prf {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    margin: 0 60px;
+  }
+
+  .message-blocks .block {
+    border-color: #A7DBD8;
+  }
+
+  .main-input {
+    width: 350px;
+    height: 30px;
+    font-size: 14px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+
+</style>
 </head>
   <body onload="loaded()">
-    <div id="m1"></div>
-    <div id="iv"></div>
-    <div id="ct1"></div>
+  <div class="container">
+    <!-- <div class="circuit-left">
+      <div id="iv"></div>
+    </div> -->
+    <div class="circuit-right">
+      <input id="messageInput" class="main-input" maxlength="48" value="This phrase is 48 bytes (3 * 128 bits) long!!!!!" />
+      <div class="message-blocks block-row">
+        <div id="messageBlock1" class="block"></div>
+        <div id="messageBlock2" class="block"></div>
+        <div id="messageBlock3" class="block"></div>
+      </div>
+
+      <div class="prfs block-row">
+        <div id="prf1" class="prf"></div>
+        <div id="prf2" class="prf"></div>
+        <div id="prf3" class="prf"></div>
+      </div>
+
+      <div class="prf-outputs block-row">
+        <div id="prfOutput1" class="prf-output"></div>
+        <div id="prfOutput2" class="prf-output"></div>
+        <div id="prfOutput3" class="prf-output"></div>
+      </div>
+
+      <div class="ciphertext-blocks block-row">
+        <div id="ciphertextBlock1" class="block"></div>
+        <div id="ciphertextBlock2" class="block"></div>
+        <div id="ciphertextBlock3" class="block"></div>
+      </div>
+    </div>
+  </div>
+
   </body>
 </html>
