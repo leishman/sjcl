@@ -28,6 +28,7 @@
     width: 800px;
     margin: 0 auto;
     padding-top: 40px;
+    text-align: center;
   }
 
   .circuit-left, .circuit-right {
@@ -56,8 +57,12 @@
     display: inline-block;
     border: 3px solid;
     border-radius: 3px;
-    padding: 20px 0;
+    padding: 5px 0;
     text-align: center;
+  }
+
+  .block-row div p {
+    line-height: 14px;
   }
 
   .block, .prf-output {
@@ -68,10 +73,10 @@
   }
 
   .prf {
-    border-radius: 50%;
-    width: 50px;
+    border-radius: 50% !important;
+    width: 150px;
     height: 50px;
-    margin: 0 60px;
+    margin: 0 10px;
   }
 
   .message-blocks .block {
@@ -87,15 +92,23 @@
     text-align: center;
   }
 
+  .empty {
+    background-color: lightgray;
+  }
+
 
 </style>
 </head>
   <body onload="loaded()">
   <div class="container">
+    <h2>Illustration of AES operating in Random Counter Mode</h2>
+    <p>Operating with 128 bit key and block size</p>
+    <a href="http://en.wikipedia.org/wiki/CCM_mode" target="_blank">More information here</a>
     <!-- <div class="circuit-left">
       <div id="iv"></div>
     </div> -->
     <div class="circuit-right">
+      <p><b>Message To Encrypt:</b></p>
       <input id="messageInput" class="main-input" maxlength="48" value="This phrase is 48 bytes (3 * 128 bits) long!!!!!" />
       <div class="message-blocks block-row">
         <div id="messageBlock1" class="block"></div>
@@ -103,17 +116,22 @@
         <div id="messageBlock3" class="block"></div>
       </div>
 
+      <p>Incrementing Initialization Vectors</p>
       <div class="prfs block-row">
         <div id="prf1" class="prf"></div>
         <div id="prf2" class="prf"></div>
         <div id="prf3" class="prf"></div>
       </div>
 
+      <p>The key, k is '1234'. Let F be the pseudo-random function defined by AES.</p>
+      <p>The values in these boxes are the result of F(k, IV_i), where IV_i is the number above. (ASCII encoded) </p>
       <div class="prf-outputs block-row">
         <div id="prfOutput1" class="prf-output"></div>
         <div id="prfOutput2" class="prf-output"></div>
         <div id="prfOutput3" class="prf-output"></div>
       </div>
+      <p>The value in the boxes below are the output of the message block xor the output of F(k, IV_i), the block directly above.</p>
+      <p>These are the ciphertext blocks (the encrypted message)</p>
 
       <div class="ciphertext-blocks block-row">
         <div id="ciphertextBlock1" class="block"></div>

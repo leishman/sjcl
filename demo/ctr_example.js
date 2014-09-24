@@ -21,10 +21,13 @@ function runCircuit(evnt) {
 
   fillRowElements = function(elements, arr) {
     for(var i=0; i < elements.length; i++) {
+      var elem = elements[i];
       if(arr[i] !== undefined) {
-        elements[i].innerHTML = arr[i];
+        elem.innerHTML = '<p>' + arr[i] + '</p>';
+        elem.classList.remove('empty');
       } else {
-        elements[i].innerHTML = '';
+        elem.innerHTML = '<p>empty...</p>';
+        elem.classList.add('empty');
       }
     }
   }

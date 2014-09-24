@@ -43,7 +43,6 @@ sjcl.mode.ccm = {
 
     // encrypt
     out = sjcl.mode.ccm._ctrMode(prf, out, iv, tag, tlen, L);
-    console.log(w.concat(out.data, out.tag))
     return w.concat(out.data, out.tag);
   },
 
